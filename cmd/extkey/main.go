@@ -13,8 +13,6 @@ import (
 )
 
 func main() {
-	hrp := "tp"
-
 	var err error
 	var mnemonic []byte
 	if m, ok := os.LookupEnv("MNEMONIC"); !ok {
@@ -39,6 +37,19 @@ func main() {
 	} else {
 		passphrase = []byte(p)
 	}
+
+	var hrp string
+	if h, ok := os.LookupEnv("HRP"); !ok {
+		fmt.Printf("HRP: ")
+		_, err = fmt.Scanf("%s", &hrp)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("\n")
+	} else {
+		hrp = h
+	}
+
 
 	var path string
 	if r, ok := os.LookupEnv("HDPATH"); !ok {
