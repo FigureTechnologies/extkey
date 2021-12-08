@@ -1,9 +1,11 @@
-Installation
+## Installation
 ```
 go install github.com/provenance-io/extkey/cmd/extkey@latest
 ```
 
-# Key generation Usage
+# Encoding
+
+## Key generation interactive
 ```
 # Using interactive mode
  ▷▷ extkey
@@ -23,6 +25,7 @@ ChildKey Public : xpub6Dq6DrkhVnTjU4KbUty2ujmm5pUDZStvkyFaEPVvPrQuFvuZ3meeJcWGJw
 Address: tp1qfqkaaq5qdyd80uvpv4crcd3caw0dc44xd0vuv2jzpn3ngmjsausjuj6x35
 ```
 
+## Key generation with env vars
 ```
 # Using env vars
 $ MNEMONIC="fly fly comfort" PASSPHRASE="" HDPATH="m/44'/1'/0'/0'" HRP="tp" ./extkey -
@@ -37,7 +40,9 @@ ChildKey Public : xpub6Dq6DrkhVnTR1hwhfGLPW1CbQxg9LpRvEMiUyjJKHuoefjyHQjqtHVA28N
 Address: tp1qvaurcy20khn6p8hqj6rm4fll8jvflwfs4d5z6ypskdnsz80ahf52mtue07
 ```
 
-# Decoding xprv keys
+# Decoding
+
+## Decoding xprv keys
 ```
  ▷▷ ./extkey xprv9zqjpMDofQuSFaF8NsS2Ybq2Xndj9zB5PkKyS16JqWsvP8aQWELPkpBnTh6NUUFHmRqRxVpz3fT8S2ckHSRSQ8EDcS4ZifxwQsjWgJjn5GK
 HRP: tp
@@ -50,7 +55,7 @@ Depth      : 4 (m/44/coin/account/*change/index)
 Address    : tp1qfqkaaq5qdyd80uvpv4crcd3caw0dc44xd0vuv2jzpn3ngmjsausjuj6x35
 ```
 
-# Decoding xpub keys
+## Decoding xpub keys
 ```
  ▷▷ ./extkey xpub6Dq6DrkhVnTjU4KbUty2ujmm5pUDZStvkyFaEPVvPrQuFvuZ3meeJcWGJwjLjb666HDPxVg2SDTMuh6JVfP897z5VJxRoSf82koiPucLPDm
 HRP: tp
