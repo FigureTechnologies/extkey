@@ -28,7 +28,7 @@ Address: tp1qfqkaaq5qdyd80uvpv4crcd3caw0dc44xd0vuv2jzpn3ngmjsausjuj6x35
 ## Key generation with env vars
 ```
 # Using env vars
-$ MNEMONIC="fly fly comfort" PASSPHRASE="" HDPATH="m/44'/1'/0'/0'" HRP="tp" ./extkey -
+$ MNEMONIC="fly fly comfort" PASSPHRASE="" HDPATH="m/44'/1'/0'/0'" HRP="tp" extkey
 
 RootKey Private: xprv9s21ZrQH143K2gAYPH8TS4wyWvQ4F99jm7cHbckUwKwvk75QpVx6VmqqZxgUno53xUWNbhnUy83RnPqSCa7hfKQFzmp1Lcsv2pp2PikLtHU
 RootKey Public : xpub661MyMwAqRbcFAF1VJfToCti4xEYebsb8LXtQ1A6VfUucuQZN3GM3aAKREjZt3ZFhQB2M5Le1FEfuhVQRQ8DgvmPkLjgKPMAFo5X923Ut1B
@@ -44,7 +44,7 @@ Address: tp1qvaurcy20khn6p8hqj6rm4fll8jvflwfs4d5z6ypskdnsz80ahf52mtue07
 
 ## Decoding xprv keys
 ```
- ▷▷ ./extkey xprv9zqjpMDofQuSFaF8NsS2Ybq2Xndj9zB5PkKyS16JqWsvP8aQWELPkpBnTh6NUUFHmRqRxVpz3fT8S2ckHSRSQ8EDcS4ZifxwQsjWgJjn5GK
+ ▷▷ extkey xprv9zqjpMDofQuSFaF8NsS2Ybq2Xndj9zB5PkKyS16JqWsvP8aQWELPkpBnTh6NUUFHmRqRxVpz3fT8S2ckHSRSQ8EDcS4ZifxwQsjWgJjn5GK
 HRP: tp
 
 Key Private: xprv9zqjpMDofQuSFaF8NsS2Ybq2Xndj9zB5PkKyS16JqWsvP8aQWELPkpBnTh6NUUFHmRqRxVpz3fT8S2ckHSRSQ8EDcS4ZifxwQsjWgJjn5GK
@@ -57,7 +57,7 @@ Address    : tp1qfqkaaq5qdyd80uvpv4crcd3caw0dc44xd0vuv2jzpn3ngmjsausjuj6x35
 
 ## Decoding xpub keys
 ```
- ▷▷ ./extkey xpub6Dq6DrkhVnTjU4KbUty2ujmm5pUDZStvkyFaEPVvPrQuFvuZ3meeJcWGJwjLjb666HDPxVg2SDTMuh6JVfP897z5VJxRoSf82koiPucLPDm
+ ▷▷ extkey xpub6Dq6DrkhVnTjU4KbUty2ujmm5pUDZStvkyFaEPVvPrQuFvuZ3meeJcWGJwjLjb666HDPxVg2SDTMuh6JVfP897z5VJxRoSf82koiPucLPDm
 HRP: tp
 
 Key Private: xpub6Dq6DrkhVnTjU4KbUty2ujmm5pUDZStvkyFaEPVvPrQuFvuZ3meeJcWGJwjLjb666HDPxVg2SDTMuh6JVfP897z5VJxRoSf82koiPucLPDm
