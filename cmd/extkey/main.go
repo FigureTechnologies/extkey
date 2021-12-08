@@ -13,6 +13,53 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		decode(os.Args[1])
+	} else {
+		encode()
+	}
+}
+
+func decode(xkey string) {
+	var hrp string
+	if h, ok := os.LookupEnv("HRP"); !ok {
+		fmt.Printf("HRP: ")
+		_, err := fmt.Scanf("%s", &hrp)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		hrp = h
+	}
+
+	key, err := bip32.B58Deserialize(xkey)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println()
+	fmt.Printf("Key Private: %s\n", key.B58Serialize())
+	fmt.Printf("Key Public : %s\n", key.PublicKey().B58Serialize())
+	fmt.Printf("ChainCode  : %X\n", key.ChainCode)
+	fmt.Println()
+	fmt.Printf("Depth      : %d (%s)\n", key.Depth, depthString(key.Depth))
+	fmt.Printf("Address    : %s\n", toAddress(hrp, key))
+}
+
+func depthString(depth byte) string {
+	path := []string{
+		"m", "44", "coin", "account", "change", "index",
+	}
+
+	for i, _ := range path {
+		if i == int(depth) {
+			path[i] = "*"+path[i]
+		}
+	}
+	return strings.Join(path, "/")
+}
+
+func encode() {
 	var err error
 	var mnemonic []byte
 	if m, ok := os.LookupEnv("MNEMONIC"); !ok {
