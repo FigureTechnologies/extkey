@@ -41,10 +41,12 @@ func decode(xkey string) {
 	}
 
 	fmt.Println()
-	fmt.Printf("Key Private: %s\n", key.B58Serialize())
+	if key.IsPrivate {
+		fmt.Printf("Key Private: %s\n", key.B58Serialize())
+	}
 	fmt.Printf("Key Public : %s\n", key.PublicKey().B58Serialize())
 	fmt.Printf("ChainCode  : %X\n", key.ChainCode)
-	fmt.Println()
+	fmt.Printf("Fingerprint: %X\n", key.FingerPrint)
 	fmt.Printf("Depth      : %d (%s)\n", key.Depth, depthString(key.Depth))
 	fmt.Printf("Address    : %s\n", toAddress(hrp, key))
 }
@@ -130,7 +132,7 @@ func encode() {
 	}
 	for i, childIndex := range bip44Indexes {
 		if bip44Harden[i] {
-			childIndex |= 0x80000000
+			childIndex |= bip32.FirstHardenedChild
 		}
 		childKey, err = childKey.NewChildKey(childIndex)
 		if err != nil {
