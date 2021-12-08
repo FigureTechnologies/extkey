@@ -21,7 +21,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("\n")
+		fmt.Printf("\n\n")
 	} else {
 		mnemonic = []byte(m)
 	}
@@ -33,7 +33,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("\n")
+		fmt.Printf("\n\n")
 	} else {
 		passphrase = []byte(p)
 	}
@@ -49,7 +49,6 @@ func main() {
 	} else {
 		hrp = h
 	}
-
 
 	var path string
 	if r, ok := os.LookupEnv("HDPATH"); !ok {
