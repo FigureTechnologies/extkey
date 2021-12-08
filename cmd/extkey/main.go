@@ -1,12 +1,15 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
-	"github.com/btcsuite/btcutil/bech32"
+	"github.com/enigmampc/btcutil/bech32"
 	"github.com/tyler-smith/go-bip32"
 	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/crypto/ssh/terminal"
+	"hash"
 	"os"
+	"golang.org/x/crypto/ripemd160"
 	"strconv"
 	"strings"
 	"syscall"
@@ -118,7 +121,7 @@ func encode() {
 	fmt.Println()
 	fmt.Printf("RootKey Private: %s\n", rootKey.B58Serialize())
 	fmt.Printf("RootKey Public : %s\n", rootKey.PublicKey().B58Serialize())
-	fmt.Printf("Address: %s\n", toAddress(hrp, rootKey))
+	fmt.Printf("Address: %s\n", toAddress(hrp, rootKey.PublicKey()))
 
 	childKey := rootKey
 	bip44Indexes, bip44Harden, err := parseBIP44(path)
@@ -142,24 +145,25 @@ func encode() {
 }
 
 func toAddress(hrp string, key *bip32.Key) string {
-	addr, err := toAddressErr(hrp, key)
+	if key.IsPrivate {
+		key = key.PublicKey()
+	}
+
+	addr, err := toAddressErr(hrp, key.Key)
 	if err != nil {
 		panic(err)
 	}
 	return addr
 }
 
-func toAddressErr(hrp string, key *bip32.Key) (string, error) {
-	pubkey := key.PublicKey().Key
-	conv, err := bech32.ConvertBits(pubkey, 8, 5, true)
+// toAddressErr converts from a base64 encoded byte string to base32 encoded byte string and then to bech32.
+func toAddressErr(hrp string, data []byte) (string, error) {
+	bz := Hash160(data)
+	converted, err := bech32.ConvertBits(bz, 8, 5, true)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("encoding bech32 failed: %w", err)
 	}
-	address, err := bech32.Encode(hrp, conv)
-	if err != nil {
-		return "", err
-	}
-	return address, nil
+	return bech32.Encode(hrp, converted)
 }
 
 func parseBIP44(path string) ([]uint32, []bool, error) {
@@ -185,4 +189,14 @@ func parseBIP44(path string) ([]uint32, []bool, error) {
 		indexes[i] = uint32(childIndex)
 	}
 	return indexes, harden, nil
+}
+
+// Hash160 calculates the hash ripemd160(sha256(b)).
+func Hash160(buf []byte) []byte {
+	return calcHash(calcHash(buf, sha256.New()), ripemd160.New())
+}
+
+func calcHash(buf []byte, hasher hash.Hash) []byte {
+	_, _ = hasher.Write(buf)
+	return hasher.Sum(nil)
 }
