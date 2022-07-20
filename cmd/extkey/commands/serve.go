@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"fmt"
+	"encoding/base64"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )
@@ -35,10 +35,20 @@ func generateKeys(c *gin.Context) {
 		c.JSON(400, mkError("missing hrp"))
 		return
 	}
-	hdPath := c.Query("hdPath")
-	fmt.Printf("generating keys for hrp:%s hdPath:%s\n", hrp, hdPath)
 
-	key, err := GenerateExtKey(hrp, hdPath)
+	var seedBz []byte
+	var err error
+	seed := c.Query("seed")
+	if seed != "" {
+		seedBz, err = base64.URLEncoding.DecodeString(seed)
+		if err != nil {
+			c.JSON(400, mkError("unable to decode seed"))
+			return
+		}
+	}
+
+	hdPath := c.Query("hdPath")
+	key, err := GenerateExtKey(hrp, hdPath, seedBz)
 	if err != nil {
 		c.AbortWithError(505, err)
 		return

@@ -20,6 +20,7 @@ func addFlags(cmd *cobra.Command, opts ...func(cmd *cobra.Command)) {
 var format string
 var hdPath string
 var hrp string
+var seed string
 
 var flagHRP = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&hrp, "hrp", "", "Human readable prefix")
@@ -32,7 +33,10 @@ var flagFormat = func(cmd *cobra.Command) {
 
 var flagHDPath = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&hdPath, "hd-path", "", "The bip44 hd path used to derive the extended Key")
-	_ = cmd.MarkFlagRequired("hd-path")
+}
+
+var flagSeed = func(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&seed, "seed", "", "The base64 url encoded seed to use for the key derivation")
 }
 
 func formatize(format string) (Formatter, error) {
