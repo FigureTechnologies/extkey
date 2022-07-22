@@ -76,7 +76,7 @@ func envOrSecret(name string) (string, error) {
 			return "", err
 		}
 		value = string(bz)
-		fmt.Printf("\n\n")
+		fmt.Printf("\n")
 	} else {
 		value = m
 	}
