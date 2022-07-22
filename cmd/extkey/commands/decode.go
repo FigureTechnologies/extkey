@@ -27,10 +27,10 @@ func init() {
 	addFlags(CmdDecode, flagHRP, flagFormat)
 }
 
-func decode(xkey string, w io.Writer, formatter Formatter) {
+func decode(xkey string, w io.Writer, formatter Formatter) error {
 	key, err := bip32.B58Deserialize(xkey)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	info := decodedKeyInfo{}
@@ -49,6 +49,7 @@ func decode(xkey string, w io.Writer, formatter Formatter) {
 
 	output, err := formatter(info)
 	fmt.Fprintf(w, "%s\n", output)
+	return nil
 }
 
 type decodedKeyInfo struct {
@@ -61,17 +62,4 @@ type decodedKeyInfo struct {
 		Chaincode   string `json:"chaincode" yaml:"chaincode"`
 		Fingerprint string `json:"fingerprint" yaml:"fingerprint"`
 	} `json:"xkey" yaml:"xkey"`
-}
-
-func test() {
-	var key *bip32.Key
-	fmt.Println()
-	if key.IsPrivate {
-		fmt.Printf("Key Private: %s\n", key.B58Serialize())
-	}
-	fmt.Printf("Key Public : %s\n", key.PublicKey().B58Serialize())
-	fmt.Printf("ChainCode  : %X\n", key.ChainCode)
-	fmt.Printf("Fingerprint: %X\n", key.FingerPrint)
-	fmt.Printf("Depth      : %d (%s)\n", key.Depth, depthString(key.Depth))
-	fmt.Printf("Address    : %s\n", toAddress(hrp, key))
 }
