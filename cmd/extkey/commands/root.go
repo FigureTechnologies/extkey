@@ -9,5 +9,5 @@ var CmdRoot = &cobra.Command{
 }
 
 func init() {
-	CmdRoot.AddCommand(CmdGenerate, CmdEncode, CmdDecode, CmdServe())
+	CmdRoot.AddCommand(CmdGenerate, CmdEncode, CmdDecode, CmdServe)
 }

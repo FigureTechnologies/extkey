@@ -21,6 +21,7 @@ var format string
 var hdPath string
 var hrp string
 var seed string
+var laddr string
 
 var flagHRP = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&hrp, "hrp", "", "Human readable prefix")
@@ -37,6 +38,10 @@ var flagHDPath = func(cmd *cobra.Command) {
 
 var flagSeed = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&seed, "seed", "", "The base64 url encoded seed to use for the key derivation")
+}
+
+var flagLAddr = func(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&laddr, "laddr", "0.0.0.0:9000", "The address:port to listen on")
 }
 
 func formatize(format string) (Formatter, error) {

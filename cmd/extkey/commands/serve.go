@@ -6,13 +6,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CmdServe() *cobra.Command {
-	return &cobra.Command{
-		Use: "serve",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return server()
-		},
-	}
+var CmdServe = &cobra.Command{
+	Use: "serve",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return server()
+	},
+}
+
+func init() {
+	addFlags(CmdServe, flagLAddr)
 }
 
 func newRouter() *gin.Engine {
@@ -59,7 +61,7 @@ func generateKeys(c *gin.Context) {
 
 func server() error {
 	router := newRouter()
-	err := router.Run(":9000")
+	err := router.Run(laddr)
 	if err != nil {
 		return err
 	}
