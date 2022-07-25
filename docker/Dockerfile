@@ -6,7 +6,7 @@ COPY ./cmd/ ./cmd/
 RUN go mod download && go build -o /go/bin/extkey ./cmd/extkey
 
 # Runtime
-FROM gcr.io/distroless/base-debian11
+FROM gcr.io/distroless/base-debian11 as run
 COPY --from=build /go/bin/extkey /extkey
 ENV GIN_MODE=release
 ENTRYPOINT ["/extkey"]
