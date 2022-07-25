@@ -137,3 +137,15 @@ $ curl "localhost:9000/generate?hrp=tp&seed=UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztW
   }
 }
 ```
+
+# Running via docker
+```
+# Default listen port is 7000
+$ docker run -p 7000:7000 -it provenanceio/extkey
+
+# To specify listen port of 9000
+$ docker run -p 9000:9000 -it provenanceio/extkey serve --laddr :9000
+
+# Enable extra gin debug logs
+$ docker run -p 7000:7000 -e GIN_MODE=debug -it provenanceio/extkey 
+```

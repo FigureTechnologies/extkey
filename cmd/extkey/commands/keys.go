@@ -2,8 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"github.com/tyler-smith/go-bip32"
 	"math/big"
+
+	bip32 "github.com/tyler-smith/go-bip32"
 )
 
 func DeriveChildKey(parentKey *bip32.Key, path string) (*bip32.Key, error) {

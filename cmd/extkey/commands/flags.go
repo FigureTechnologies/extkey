@@ -3,12 +3,13 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
-	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
 	"syscall"
+
+	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
+	"gopkg.in/yaml.v3"
 )
 
 func addFlags(cmd *cobra.Command, opts ...func(cmd *cobra.Command)) {
@@ -21,6 +22,7 @@ var format string
 var hdPath string
 var hrp string
 var seed string
+var laddr string
 
 var flagHRP = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&hrp, "hrp", "", "Human readable prefix")
@@ -39,32 +41,21 @@ var flagSeed = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&seed, "seed", "", "The base64 url encoded seed to use for the key derivation")
 }
 
-func formatize(format string) (Formatter, error) {
-	if format == "json" {
-		return func(data interface{}) ([]byte, error) {
-			return json.Marshal(data)
-		}, nil
-	} else if format == "yaml" || format == "" {
-		return func(data interface{}) ([]byte, error) {
-			return yaml.Marshal(data)
-		}, nil
-	} else {
-		return nil, fmt.Errorf("invalid format %s", format)
-	}
+var flagLAddr = func(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&laddr, "laddr", "0.0.0.0:9000", "The address:port to listen on")
 }
 
-func envOrPrompt(name string) (string, error) {
-	var value string
-	if m, ok := os.LookupEnv(strings.ToUpper(name)); !ok {
-		fmt.Printf("%s: ", name)
-		_, err := fmt.Scanf("%s", &value)
-		if err != nil {
-			return "", err
-		}
-	} else {
-		hrp = m
+func formatize(format string) (Formatter, error) {
+	switch format {
+	case "json":
+		return json.Marshal, nil
+	case "yaml":
+	case "":
+		return yaml.Marshal, nil
+	default:
+		return nil, fmt.Errorf("invalid format %s", format)
 	}
-	return value, nil
+	return nil, nil
 }
 
 func envOrSecret(name string) (string, error) {

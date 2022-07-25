@@ -1,0 +1,93 @@
+run:
+  tests: false
+#   # timeout for analysis, e.g. 30s, 5m, default is 1m
+#   timeout: 5m
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - errcheck
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - revive
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+  
+    - misspell
+    - nakedret
+    - prealloc
+    - exportloopref
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unused
+    - unparam
+    # - wsl
+    - varcheck
+    - whitespace
+    - nolintlint
+
+issues:
+  exclude-rules:
+    - text: "Use of weak random number generator"
+      linters:
+        - gosec
+    - text: "comment on exported var"
+      linters:
+        - revive
+    - text: "don't use an underscore in package name"
+      linters:
+        - revive
+    - text: "don't use underscores in Go names; const (TxEndpoint|TLCategory|TLType|TLAction)_"
+      linters:
+        - revive
+    - text: "ST1003:"
+      linters:
+        - stylecheck
+    - text: "don't use leading k in Go names"
+      linters:
+        - revive
+    # removed due to the upstream legacy amino deprecation while still required for ledger signing
+    # TODO: Restore this check when Amino support is removed.
+    - text: "SA1019:"
+      linters:
+        - staticcheck
+  max-issues-per-linter: 10000
+  max-same-issues: 10000
+
+linters-settings:
+  govet:
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  golint:
+    min-confidence: 0
+  # gocyclo:
+  #   min-complexity: 15
+  dogsled:
+    max-blank-identifiers: 3
+
+  misspell:
+    locale: US
+    ignore-words:
+    - cancelled
+  nolintlint:
+    allow-unused: false
+    allow-leading-space: true
+    require-explanation: false
+    require-specific: false

@@ -2,17 +2,20 @@ package commands
 
 import (
 	"encoding/base64"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )
 
-func CmdServe() *cobra.Command {
-	return &cobra.Command{
-		Use: "serve",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return server()
-		},
-	}
+var CmdServe = &cobra.Command{
+	Use: "serve",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return server()
+	},
+}
+
+func init() {
+	addFlags(CmdServe, flagLAddr)
 }
 
 func newRouter() *gin.Engine {
@@ -50,7 +53,7 @@ func generateKeys(c *gin.Context) {
 	hdPath := c.Query("hdPath")
 	key, err := GenerateExtKey(hrp, hdPath, seedBz)
 	if err != nil {
-		c.AbortWithError(505, err)
+		_ = c.AbortWithError(505, err)
 		return
 	}
 
@@ -59,7 +62,7 @@ func generateKeys(c *gin.Context) {
 
 func server() error {
 	router := newRouter()
-	err := router.Run(":9000")
+	err := router.Run(laddr)
 	if err != nil {
 		return err
 	}

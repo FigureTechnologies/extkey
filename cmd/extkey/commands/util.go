@@ -3,12 +3,13 @@ package commands
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/btcsuite/btcutil/bech32"
-	"github.com/tyler-smith/go-bip32"
-	"golang.org/x/crypto/ripemd160"
 	"hash"
 	"strconv"
 	"strings"
+
+	"github.com/btcsuite/btcutil/bech32"
+	bip32 "github.com/tyler-smith/go-bip32"
+	"golang.org/x/crypto/ripemd160"
 )
 
 func depthString(depth byte) string {
@@ -16,7 +17,7 @@ func depthString(depth byte) string {
 		"m", "44", "coin", "account", "change", "index",
 	}
 
-	for i, _ := range path {
+	for i := range path {
 		if i == int(depth) {
 			path[i] = "*" + path[i]
 		}

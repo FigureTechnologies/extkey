@@ -3,12 +3,13 @@ package commands
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/tyler-smith/go-bip32"
-	"github.com/tyler-smith/go-bip39"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
+	bip32 "github.com/tyler-smith/go-bip32"
+	bip39 "github.com/tyler-smith/go-bip39"
 )
 
 var CmdEncode = &cobra.Command{
@@ -18,13 +19,13 @@ var CmdEncode = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		hrp := strings.TrimSpace(cmd.Flag("hrp").Value.String())
-		if hrp == "" {
+		pHrp := strings.TrimSpace(cmd.Flag("hrp").Value.String())
+		if pHrp == "" {
 			return fmt.Errorf("hrp is required")
 		}
 		hdPath := strings.TrimSpace(cmd.Flag("hd-path").Value.String())
 		seedB64 := strings.TrimSpace(cmd.Flag("seed").Value.String())
-		return encode(hdPath, format, os.Stdout, seedB64)
+		return encode(hdPath, format, os.Stdout, pHrp, seedB64)
 	},
 }
 
@@ -32,16 +33,18 @@ func init() {
 	addFlags(CmdEncode, flagFormat, flagHDPath, flagHRP, flagSeed)
 }
 
-func encode(path string, formatter Formatter, w io.Writer, seedB64 string) error {
+func encode(path string, formatter Formatter, w io.Writer, hrp, seedB64 string) error {
 	var seed []byte
 	var err error
 	if seedB64 == "" {
-		mnemonic, err := envOrSecret("mnemonic")
+		var mnemonic string
+		mnemonic, err = envOrSecret("mnemonic")
 		if err != nil {
 			return err
 		}
 
-		passphrase, err := envOrSecret("passphrase")
+		var passphrase string
+		passphrase, err = envOrSecret("passphrase")
 		if err != nil {
 			return err
 		}
@@ -65,7 +68,8 @@ func encode(path string, formatter Formatter, w io.Writer, seedB64 string) error
 		RootKey:  NewExtKeyData(rootKey, hrp),
 	}
 	if hdPath != "" {
-		childKey, err := DeriveChildKey(rootKey, path)
+		var childKey *bip32.Key
+		childKey, err = DeriveChildKey(rootKey, path)
 		if err != nil {
 			return err
 		}
