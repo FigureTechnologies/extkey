@@ -3,12 +3,13 @@ package commands
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/tyler-smith/go-bip32"
-	"github.com/tyler-smith/go-bip39"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
+	bip32 "github.com/tyler-smith/go-bip32"
+	bip39 "github.com/tyler-smith/go-bip39"
 )
 
 var CmdGenerate = &cobra.Command{
@@ -55,7 +56,8 @@ func GenerateExtKey(hrp, hdPath string, seedBz []byte) (someKey, error) {
 	var err error
 	var mnemonic string
 	if seedBz == nil {
-		entropy, err := bip39.NewEntropy(256)
+		var entropy []byte
+		entropy, err = bip39.NewEntropy(256)
 		if err != nil {
 			return someKey{}, err
 		}

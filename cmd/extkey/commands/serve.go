@@ -2,6 +2,7 @@ package commands
 
 import (
 	"encoding/base64"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )
@@ -52,7 +53,7 @@ func generateKeys(c *gin.Context) {
 	hdPath := c.Query("hdPath")
 	key, err := GenerateExtKey(hrp, hdPath, seedBz)
 	if err != nil {
-		c.AbortWithError(505, err)
+		_ = c.AbortWithError(505, err)
 		return
 	}
 

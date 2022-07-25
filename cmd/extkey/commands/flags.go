@@ -3,12 +3,13 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
-	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
 	"syscall"
+
+	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
+	"gopkg.in/yaml.v3"
 )
 
 func addFlags(cmd *cobra.Command, opts ...func(cmd *cobra.Command)) {
@@ -45,31 +46,16 @@ var flagLAddr = func(cmd *cobra.Command) {
 }
 
 func formatize(format string) (Formatter, error) {
-	if format == "json" {
-		return func(data interface{}) ([]byte, error) {
-			return json.Marshal(data)
-		}, nil
-	} else if format == "yaml" || format == "" {
-		return func(data interface{}) ([]byte, error) {
-			return yaml.Marshal(data)
-		}, nil
-	} else {
+	switch format {
+	case "json":
+		return json.Marshal, nil
+	case "yaml":
+	case "":
+		return yaml.Marshal, nil
+	default:
 		return nil, fmt.Errorf("invalid format %s", format)
 	}
-}
-
-func envOrPrompt(name string) (string, error) {
-	var value string
-	if m, ok := os.LookupEnv(strings.ToUpper(name)); !ok {
-		fmt.Printf("%s: ", name)
-		_, err := fmt.Scanf("%s", &value)
-		if err != nil {
-			return "", err
-		}
-	} else {
-		hrp = m
-	}
-	return value, nil
+	return nil, nil
 }
 
 func envOrSecret(name string) (string, error) {

@@ -2,11 +2,12 @@ package commands
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/tyler-smith/go-bip32"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
+	bip32 "github.com/tyler-smith/go-bip32"
 )
 
 var CmdDecode = &cobra.Command{
@@ -18,8 +19,7 @@ var CmdDecode = &cobra.Command{
 			return err
 		}
 		extkey := strings.TrimSpace(args[0])
-		decode(extkey, os.Stdout, formatter)
-		return nil
+		return decode(extkey, os.Stdout, formatter)
 	},
 }
 
@@ -48,6 +48,9 @@ func decode(xkey string, w io.Writer, formatter Formatter) error {
 	}
 
 	output, err := formatter(info)
+	if err != nil {
+		return err
+	}
 	fmt.Fprintf(w, "%s\n", output)
 	return nil
 }
