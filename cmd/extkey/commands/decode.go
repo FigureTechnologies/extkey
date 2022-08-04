@@ -11,15 +11,20 @@ import (
 )
 
 var CmdDecode = &cobra.Command{
-	Use:  "decode",
-	Args: cobra.ExactArgs(1),
+	Use:   "decode [xprv..|xpub..]",
+	Short: "Decode an xprv/xpub extended key",
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		hrp, err := cmd.PersistentFlags().GetString("hrp")
+		if err != nil {
+			return err
+		}
 		formatter, err := formatize(strings.TrimSpace(cmd.Flag("format").Value.String()))
 		if err != nil {
 			return err
 		}
 		extkey := strings.TrimSpace(args[0])
-		return decode(extkey, os.Stdout, formatter)
+		return decode(hrp, extkey, os.Stdout, formatter)
 	},
 }
 
@@ -27,7 +32,7 @@ func init() {
 	addFlags(CmdDecode, flagHRP, flagFormat)
 }
 
-func decode(xkey string, w io.Writer, formatter Formatter) error {
+func decode(hrp, xkey string, w io.Writer, formatter Formatter) error {
 	key, err := bip32.B58Deserialize(xkey)
 	if err != nil {
 		return err
@@ -35,16 +40,12 @@ func decode(xkey string, w io.Writer, formatter Formatter) error {
 
 	info := decodedKeyInfo{}
 	info.Address = toAddress(hrp, key)
-	info.XKey.Depth = key.Depth
-	info.XKey.DepthLoc = depthString(key.Depth)
-	info.XKey.Chaincode = fmt.Sprintf("%X", key.ChainCode)
-	info.XKey.Fingerprint = fmt.Sprintf("%X", key.FingerPrint)
-
-	if key.IsPrivate {
-		info.XKey.Private = key.B58Serialize()
-		info.XKey.Public = key.PublicKey().B58Serialize()
-	} else {
-		info.XKey.Public = key.B58Serialize()
+	info.XKey = SomeKey{
+		Seed:      "",
+		Mnemonic:  "",
+		Hrp:       hrp,
+		RootKey:   NewExtKeyData(key, hrp, ""),
+		ChildKeys: nil,
 	}
 
 	output, err := formatter(info)
@@ -56,13 +57,6 @@ func decode(xkey string, w io.Writer, formatter Formatter) error {
 }
 
 type decodedKeyInfo struct {
-	Address string `json:"address" yaml:"address"`
-	XKey    struct {
-		Private     string `json:"private,omitempty" yaml:"private,omitempty"`
-		Public      string `json:"public" yaml:"public"`
-		Depth       byte   `json:"depth" yaml:"depth"`
-		DepthLoc    string `json:"depthLoc" yaml:"depthLoc"`
-		Chaincode   string `json:"chaincode" yaml:"chaincode"`
-		Fingerprint string `json:"fingerprint" yaml:"fingerprint"`
-	} `json:"xkey" yaml:"xkey"`
+	Address string  `json:"address" yaml:"address"`
+	XKey    SomeKey `json:"xkey" yaml:"xkey"`
 }

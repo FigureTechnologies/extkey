@@ -13,7 +13,8 @@ import (
 )
 
 var CmdEncode = &cobra.Command{
-	Use: "encode",
+	Use:   "encode",
+	Short: "Output an xprv/xpub from a mnemonic, passphrase, hd-path, and hrp",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		format, err := formatize(cmd.Flag("format").Value.String())
 		if err != nil {
@@ -23,9 +24,12 @@ var CmdEncode = &cobra.Command{
 		if pHrp == "" {
 			return fmt.Errorf("hrp is required")
 		}
-		hdPath := strings.TrimSpace(cmd.Flag("hd-path").Value.String())
+		hdPaths, err := cmd.PersistentFlags().GetStringArray("hd-path")
+		if err != nil {
+			return err
+		}
 		seedB64 := strings.TrimSpace(cmd.Flag("seed").Value.String())
-		return encode(hdPath, format, os.Stdout, pHrp, seedB64)
+		return encode(hdPaths, format, os.Stdout, pHrp, seedB64)
 	},
 }
 
@@ -33,7 +37,7 @@ func init() {
 	addFlags(CmdEncode, flagFormat, flagHDPath, flagHRP, flagSeed)
 }
 
-func encode(path string, formatter Formatter, w io.Writer, hrp, seedB64 string) error {
+func encode(paths []string, formatter Formatter, w io.Writer, hrp, seedB64 string) error {
 	var seed []byte
 	var err error
 	if seedB64 == "" {
@@ -65,15 +69,15 @@ func encode(path string, formatter Formatter, w io.Writer, hrp, seedB64 string) 
 		Seed:     base64.URLEncoding.EncodeToString(seed),
 		Mnemonic: "",
 		Hrp:      hrp,
-		RootKey:  NewExtKeyData(rootKey, hrp),
+		RootKey:  NewExtKeyData(rootKey, hrp, ""),
 	}
-	if hdPath != "" {
+	for _, path := range paths {
 		var childKey *bip32.Key
 		childKey, err = DeriveChildKey(rootKey, path)
 		if err != nil {
 			return err
 		}
-		key.ChildKey = NewExtKeyData(childKey, hrp)
+		key.ChildKeys = append(key.ChildKeys, NewExtKeyData(childKey, hrp, path))
 	}
 	output, err := formatter(key)
 	if err != nil {

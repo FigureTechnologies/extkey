@@ -10,7 +10,11 @@ import (
 var CmdServe = &cobra.Command{
 	Use: "serve",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return server()
+		laddr, err := cmd.PersistentFlags().GetString("laddr")
+		if err != nil {
+			return err
+		}
+		return server(laddr)
 	},
 }
 
@@ -50,8 +54,8 @@ func generateKeys(c *gin.Context) {
 		}
 	}
 
-	hdPath := c.Query("hdPath")
-	key, err := GenerateExtKey(hrp, hdPath, seedBz)
+	hdPaths := c.Request.URL.Query()["hdPath"]
+	key, err := GenerateExtKey(hrp, hdPaths, seedBz)
 	if err != nil {
 		_ = c.AbortWithError(505, err)
 		return
@@ -60,7 +64,7 @@ func generateKeys(c *gin.Context) {
 	c.JSON(200, key)
 }
 
-func server() error {
+func server(laddr string) error {
 	router := newRouter()
 	err := router.Run(laddr)
 	if err != nil {

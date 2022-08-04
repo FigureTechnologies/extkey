@@ -18,37 +18,30 @@ func addFlags(cmd *cobra.Command, opts ...func(cmd *cobra.Command)) {
 	}
 }
 
-var format string
-var hdPath string
-var hrp string
-var seed string
-var laddr string
-var mnemonic string
-
 var flagHRP = func(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVar(&hrp, "hrp", "", "Human readable prefix")
+	cmd.PersistentFlags().String("hrp", "", "Human readable prefix")
 	_ = cmd.MarkFlagRequired("hrp")
 }
 
 var flagFormat = func(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVar(&format, "format", "", "The format out output the keys [json|yaml|plain]")
+	cmd.PersistentFlags().String("format", "", "The format out output the keys [json|yaml|plain]")
 }
 
 var flagHDPath = func(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVar(&hdPath, "hd-path", "", "The bip44 hd path used to derive the extended Key")
+	cmd.PersistentFlags().StringArray("hd-path", []string{}, "The bip44 hd path used to derive the extended Key")
 }
 
 var flagSeed = func(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVar(&seed, "seed", "", "The base64 url encoded seed to use for the key derivation")
+	cmd.PersistentFlags().String("seed", "", "The base64 url encoded seed to use for the key derivation")
 }
 
 var flagLAddr = func(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVar(&laddr, "laddr", "0.0.0.0:9000", "The address:port to listen on")
+	cmd.PersistentFlags().String("laddr", "0.0.0.0:9000", "The address:port to listen on")
 }
 
-// var flagMnemonic = func(cmd *cobra.Command) {
-//     cmd.PersistentFlags().StringVar(&mnemonic, "mnemonic", "", "The mnemonic to use to generate the seed")
-// }
+var flagMnemonic = func(cmd *cobra.Command) {
+	cmd.PersistentFlags().String("mnemonic", "", "The mnemonic to use to generate the seed")
+}
 
 func formatize(format string) (Formatter, error) {
 	switch format {
