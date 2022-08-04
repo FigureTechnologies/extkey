@@ -39,6 +39,7 @@ var flagLAddr = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().String("laddr", "0.0.0.0:9000", "The address:port to listen on")
 }
 
+// nolint
 var flagMnemonic = func(cmd *cobra.Command) {
 	cmd.PersistentFlags().String("mnemonic", "", "The mnemonic to use to generate the seed")
 }

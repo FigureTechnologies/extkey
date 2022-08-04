@@ -20,6 +20,9 @@ var CmdGenerate = &cobra.Command{
 			return fmt.Errorf("--hrp is required")
 		}
 		hdPaths, err := cmd.PersistentFlags().GetStringArray("hd-path")
+		if err != nil {
+			return err
+		}
 		if len(hdPaths) == 0 {
 			return fmt.Errorf("--hd-path is required")
 		}
