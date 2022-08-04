@@ -61,7 +61,7 @@ func encode(path string, formatter Formatter, w io.Writer, hrp, seedB64 string) 
 	if err != nil {
 		return err
 	}
-	key := someKey{
+	key := SomeKey{
 		Seed:     base64.URLEncoding.EncodeToString(seed),
 		Mnemonic: "",
 		Hrp:      hrp,

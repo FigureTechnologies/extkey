@@ -1,14 +1,14 @@
 ## Installation
-```
-go install github.com/provenance-io/extkey/cmd/extkey@latest
+```shell
+$ go install github.com/provenance-io/extkey/cmd/extkey@latest
 ```
 
 # Encoding
 
-## Key generation interactive
-```
+## Key encoding interactive
+```shell
 # Using interactive mode
- ▷▷ extkey encode --hrp tp --hd-path "m/44'/1'/0'/420'"
+$ extkey encode --hrp tp --hd-path "m/44'/1'/0'/420'"
 mnemonic: fly fly comfort
 passphrase: 
 seed: UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztWNAXfnUME-bMpjp4jT0YxzEBWBA33_QWDAmeFE1I_hNlt2xJJew==
@@ -35,8 +35,8 @@ childKey:
         bigInt: "261180551375323774831564216383503265774120811521638640313796615741160982804745"
 ```
 
-## Key generation with env vars
-```
+## Key encoding with env vars
+```shell
 # Using env vars
 $ MNEMONIC="fly fly comfort" PASSPHRASE="" extkey encode --hrp tp --hd-path "m/44'/1'/0'/0'" 
 seed: UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztWNAXfnUME-bMpjp4jT0YxzEBWBA33_QWDAmeFE1I_hNlt2xJJew==
@@ -66,7 +66,7 @@ childKey:
 # Decoding
 
 ## Decoding xprv keys
-```
+```shell
 $ extkey decode --hrp tp xprv9zqjpMDofQuSFaF8NsS2Ybq2Xndj9zB5PkKyS16JqWsvP8aQWELPkpBnTh6NUUFHmRqRxVpz3fT8S2ckHSRSQ8EDcS4ZifxwQsjWgJjn5GK
 address: tp1ndh7g7xy48k52phkr3p37rnkazmc98zuv8fp38
 xkey:
@@ -79,7 +79,7 @@ xkey:
 ```
 
 ## Decoding xpub keys
-```
+```shell
 $ extkey decode --hrp tp xpub6Dq6DrkhVnTjU4KbUty2ujmm5pUDZStvkyFaEPVvPrQuFvuZ3meeJcWGJwjLjb666HDPxVg2SDTMuh6JVfP897z5VJxRoSf82koiPucLPDm
 address: tp1ndh7g7xy48k52phkr3p37rnkazmc98zuv8fp38
 xkey:
@@ -90,15 +90,77 @@ xkey:
     fingerprint: "28508294"
 ```
 
-# API key generation
+# Generating
+
+## Key generation with random seed
+```shell
+$ extkey gen --hd-path "m/44'/505'/0'/0'/0" --hrp tp
+seed: kwDcbPMhZOTRQpCcgtBKXxbtVcEe_4ne5tasLV-JAhlYAbaf13vRMaVANwDZTm4A75snNhI2LTH_T0NVGTYJuQ==
+mnemonic: text gown action resource depth toe parrot limit dinosaur frog again march pool another pretty imitate spatial music lecture charge very fiber few ignore
+hrp: tp
+rootKey:
+    address: tp1scl32wrzy043ldnz5qyaqn5kpjws2fktce4k7s
+    privateKey:
+        base58: xprv9s21ZrQH143K3hoYnZzA9WRAkGK7pJbjDDKf2MjstzMLyH9tUUgRtDWaPCULb6rsnijuqs3FDoXoGsZuzx8it8ZkKuyuqKZH9EghnUBBGtV
+        bytes: 0488ADE4000000000000000000A54A051BCE830BF6C6A3656C5CA2A4E45D11B44E853FF5019D8DB8F57328B00F00712F6D5E492D9516A0D68E6F1A34068206D93C3E8193D2C2DCA6F9CC3636D3773700F716
+        bigInt: "51195148534247021627172126139454315055974072071557156386597256238996714345335"
+    publicKey:
+        base58: xpub661MyMwAqRbcGBt1tbXAWeMuJJ9cDmKaaSFFpk9VTKtKr5V321zgS1q4EWQUMT7QN4xaXzkWMCzQAQ6Vp6DGtp5MyMQ7cDToY6tzNH91X57
+        bytes: 0488B21E000000000000000000A54A051BCE830BF6C6A3656C5CA2A4E45D11B44E853FF5019D8DB8F57328B00F03EF7C0C7C458B18A3D5ADEF1EA181271F4DE1191554F0B4BFF95923703FA02DC43C4BC866
+        bigInt: "455698213730695089965667949209897413589214143496016811921245211286232805420484"
+childKey:
+    address: tp1wy5vf0cem2ec88qvnj5qaeucyf3twrhhfzs7qe
+    privateKey:
+        base58: xprvA2vNQscVB7uwrpXTLYXw5ffoRxHrp75Ynwc3LVixemDticLn7BpGDnxXvc2jJEksJuef3bLP3QtKZLYRUPncbBoaBW5SMSjMENCLppnT2te
+        bytes: 0488ADE40543478CF000000000E63E5C24103358AEB259B1E0926EDED31D6DCF316F16D6A74BB4AAF9ED5D1D610001628A7298303FB55D71174CCF7C8B20D556FCF97A815456B0301A14049BD9E64A4C9357
+        bigInt: "626419391388641969500024507723796044901451795080364889081030583799756085734"
+    publicKey:
+        base58: xpub6FuipP9P1VUF5JbvSa4wSocXyz8MDZoQAAXe8t8aD6ksbQfvej8WmbH1mtypTMgVqxfkPpY94M122qqNhdWPLm1cUq4mDQW9VZeLwbZ2X6C
+        bytes: 0488B21E0543478CF000000000E63E5C24103358AEB259B1E0926EDED31D6DCF316F16D6A74BB4AAF9ED5D1D6102FE281C136209674387FE584A4A18584D0BB82C2C7B5FF818AE25C713CB3E85790139E4CD
+        bigInt: "346542509668834358586089346602711884922951328399776737952015035914050934310265"
 ```
+
+## Key generation with known seed
+```shell
+$ extkey gen --hd-path "m/44'/505'/0'/0'/0" --hrp tp --seed kwDcbPMhZOTRQpCcgtBKXxbtVcEe_4ne5tasLV-JAhlYAbaf13vRMaVANwDZTm4A75snNhI2LTH_T0NVGTYJuQ==
+seed: kwDcbPMhZOTRQpCcgtBKXxbtVcEe_4ne5tasLV-JAhlYAbaf13vRMaVANwDZTm4A75snNhI2LTH_T0NVGTYJuQ==
+hrp: tp
+rootKey:
+    address: tp1scl32wrzy043ldnz5qyaqn5kpjws2fktce4k7s
+    privateKey:
+        base58: xprv9s21ZrQH143K3hoYnZzA9WRAkGK7pJbjDDKf2MjstzMLyH9tUUgRtDWaPCULb6rsnijuqs3FDoXoGsZuzx8it8ZkKuyuqKZH9EghnUBBGtV
+        bytes: 0488ADE4000000000000000000A54A051BCE830BF6C6A3656C5CA2A4E45D11B44E853FF5019D8DB8F57328B00F00712F6D5E492D9516A0D68E6F1A34068206D93C3E8193D2C2DCA6F9CC3636D3773700F716
+        bigInt: "51195148534247021627172126139454315055974072071557156386597256238996714345335"
+    publicKey:
+        base58: xpub661MyMwAqRbcGBt1tbXAWeMuJJ9cDmKaaSFFpk9VTKtKr5V321zgS1q4EWQUMT7QN4xaXzkWMCzQAQ6Vp6DGtp5MyMQ7cDToY6tzNH91X57
+        bytes: 0488B21E000000000000000000A54A051BCE830BF6C6A3656C5CA2A4E45D11B44E853FF5019D8DB8F57328B00F03EF7C0C7C458B18A3D5ADEF1EA181271F4DE1191554F0B4BFF95923703FA02DC43C4BC866
+        bigInt: "455698213730695089965667949209897413589214143496016811921245211286232805420484"
+childKey:
+    address: tp1wy5vf0cem2ec88qvnj5qaeucyf3twrhhfzs7qe
+    privateKey:
+        base58: xprvA2vNQscVB7uwrpXTLYXw5ffoRxHrp75Ynwc3LVixemDticLn7BpGDnxXvc2jJEksJuef3bLP3QtKZLYRUPncbBoaBW5SMSjMENCLppnT2te
+        bytes: 0488ADE40543478CF000000000E63E5C24103358AEB259B1E0926EDED31D6DCF316F16D6A74BB4AAF9ED5D1D610001628A7298303FB55D71174CCF7C8B20D556FCF97A815456B0301A14049BD9E64A4C9357
+        bigInt: "626419391388641969500024507723796044901451795080364889081030583799756085734"
+    publicKey:
+        base58: xpub6FuipP9P1VUF5JbvSa4wSocXyz8MDZoQAAXe8t8aD6ksbQfvej8WmbH1mtypTMgVqxfkPpY94M122qqNhdWPLm1cUq4mDQW9VZeLwbZ2X6C
+        bytes: 0488B21E0543478CF000000000E63E5C24103358AEB259B1E0926EDED31D6DCF316F16D6A74BB4AAF9ED5D1D6102FE281C136209674387FE584A4A18584D0BB82C2C7B5FF818AE25C713CB3E85790139E4CD
+        bigInt: "346542509668834358586089346602711884922951328399776737952015035914050934310265"
+```
+
+## Key generation with known mnemonic
+```shell
+TODO
+```
+
+# API key generation
+```shell
 $ extkey serve
 ...
 [GIN-debug] GET    /generate                 --> github.com/provenance-io/extkey/cmd/extkey/commands.generateKeys (3 handlers)
 ...
 ```
 
-```
+```shell
 $ curl "localhost:9000/generate?hrp=tp" | jq
 {
   "seed": "UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztWNAXfnUME-bMpjp4jT0YxzEBWBA33_QWDAmeFE1I_hNlt2xJJew==",
@@ -139,7 +201,7 @@ $ curl "localhost:9000/generate?hrp=tp&seed=UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztW
 ```
 
 # Running via docker
-```
+```shell
 # Default listen port is 7000
 $ docker run -p 7000:7000 -it provenanceio/extkey
 

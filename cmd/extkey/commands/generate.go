@@ -16,8 +16,18 @@ var CmdGenerate = &cobra.Command{
 	Use: "gen",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hrp := strings.TrimSpace(cmd.Flag("hrp").Value.String())
+		if hrp == "" {
+			return fmt.Errorf("--hrp is required")
+		}
 		hdPath := strings.TrimSpace(cmd.Flag("hd-path").Value.String())
-		seed := strings.TrimSpace(cmd.Flag("seed").Value.String())
+		if hdPath == "" {
+			return fmt.Errorf("--hd-path is required")
+		}
+		var seed string
+		if cmd.Flag("seed") != nil {
+			seed = strings.TrimSpace(cmd.Flag("seed").Value.String())
+		}
+
 		formatter, err := formatize(strings.TrimSpace(cmd.Flag("format").Value.String()))
 		if err != nil {
 			return err
@@ -27,7 +37,7 @@ var CmdGenerate = &cobra.Command{
 }
 
 func init() {
-	addFlags(CmdGenerate, flagHRP, flagFormat, flagHDPath)
+	addFlags(CmdGenerate, flagHRP, flagFormat, flagHDPath, flagSeed)
 }
 
 func generate(hrp, hdPath, seed string, formatter Formatter, w io.Writer) error {
@@ -51,19 +61,18 @@ func generate(hrp, hdPath, seed string, formatter Formatter, w io.Writer) error 
 	return nil
 }
 
-func GenerateExtKey(hrp, hdPath string, seedBz []byte) (someKey, error) {
+func GenerateExtKey(hrp, hdPath string, seedBz []byte) (SomeKey, error) {
 	var seed []byte
 	var err error
-	var mnemonic string
 	if seedBz == nil {
 		var entropy []byte
 		entropy, err = bip39.NewEntropy(256)
 		if err != nil {
-			return someKey{}, err
+			return SomeKey{}, err
 		}
 		mnemonic, err = bip39.NewMnemonic(entropy)
 		if err != nil {
-			return someKey{}, err
+			return SomeKey{}, err
 		}
 		seed = bip39.NewSeed(mnemonic, "")
 	} else {
@@ -72,9 +81,9 @@ func GenerateExtKey(hrp, hdPath string, seedBz []byte) (someKey, error) {
 
 	rootKey, err := bip32.NewMasterKey(seed)
 	if err != nil {
-		return someKey{}, err
+		return SomeKey{}, err
 	}
-	key := someKey{
+	key := SomeKey{
 		Hrp:      hrp,
 		Seed:     base64.URLEncoding.EncodeToString(seed),
 		Mnemonic: mnemonic,
@@ -83,7 +92,7 @@ func GenerateExtKey(hrp, hdPath string, seedBz []byte) (someKey, error) {
 	if hdPath != "" {
 		childKey, err := DeriveChildKey(rootKey, hdPath)
 		if err != nil {
-			return someKey{}, err
+			return SomeKey{}, err
 		}
 		key.ChildKey = NewExtKeyData(childKey, hrp)
 	}
