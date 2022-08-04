@@ -25,7 +25,7 @@ func DeriveChildKey(parentKey *bip32.Key, path string) (*bip32.Key, error) {
 	return childKey, nil
 }
 
-type someKey struct {
+type SomeKey struct {
 	Seed     string      `json:"seed,omitempty" yaml:"seed,omitempty"`
 	Mnemonic string      `json:"mnemonic,omitempty" yaml:"mnemonic,omitempty"`
 	Hrp      string      `json:"hrp,omitempty" yaml:"hrp,omitempty"`
