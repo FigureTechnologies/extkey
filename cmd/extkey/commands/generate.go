@@ -19,8 +19,11 @@ var CmdGenerate = &cobra.Command{
 		if hrp == "" {
 			return fmt.Errorf("--hrp is required")
 		}
-		hdPath := strings.TrimSpace(cmd.Flag("hd-path").Value.String())
-		if hdPath == "" {
+		hdPaths, err := cmd.PersistentFlags().GetStringArray("hd-path")
+		if err != nil {
+			return err
+		}
+		if len(hdPaths) == 0 {
 			return fmt.Errorf("--hd-path is required")
 		}
 		var seed string
@@ -32,7 +35,7 @@ var CmdGenerate = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return generate(hrp, hdPath, seed, formatter, os.Stdout)
+		return generate(hrp, seed, hdPaths, formatter, os.Stdout)
 	},
 }
 
@@ -40,7 +43,7 @@ func init() {
 	addFlags(CmdGenerate, flagHRP, flagFormat, flagHDPath, flagSeed)
 }
 
-func generate(hrp, hdPath, seed string, formatter Formatter, w io.Writer) error {
+func generate(hrp, seed string, paths []string, formatter Formatter, w io.Writer) error {
 	var seedBz []byte
 	var err error
 	if seed != "" {
@@ -49,7 +52,7 @@ func generate(hrp, hdPath, seed string, formatter Formatter, w io.Writer) error 
 			return err
 		}
 	}
-	key, err := GenerateExtKey(hrp, hdPath, seedBz)
+	key, err := GenerateExtKey(hrp, paths, seedBz)
 	if err != nil {
 		return err
 	}
@@ -61,9 +64,10 @@ func generate(hrp, hdPath, seed string, formatter Formatter, w io.Writer) error 
 	return nil
 }
 
-func GenerateExtKey(hrp, hdPath string, seedBz []byte) (SomeKey, error) {
+func GenerateExtKey(hrp string, paths []string, seedBz []byte) (SomeKey, error) {
 	var seed []byte
 	var err error
+	var mnemonic string
 	if seedBz == nil {
 		var entropy []byte
 		entropy, err = bip39.NewEntropy(256)
@@ -87,14 +91,14 @@ func GenerateExtKey(hrp, hdPath string, seedBz []byte) (SomeKey, error) {
 		Hrp:      hrp,
 		Seed:     base64.URLEncoding.EncodeToString(seed),
 		Mnemonic: mnemonic,
-		RootKey:  NewExtKeyData(rootKey, hrp),
+		RootKey:  NewExtKeyData(rootKey, hrp, ""),
 	}
-	if hdPath != "" {
-		childKey, err := DeriveChildKey(rootKey, hdPath)
+	for _, path := range paths {
+		childKey, err := DeriveChildKey(rootKey, path)
 		if err != nil {
 			return SomeKey{}, err
 		}
-		key.ChildKey = NewExtKeyData(childKey, hrp)
+		key.ChildKeys = append(key.ChildKeys, NewExtKeyData(childKey, hrp, path))
 	}
 	return key, nil
 }

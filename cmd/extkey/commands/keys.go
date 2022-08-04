@@ -26,17 +26,22 @@ func DeriveChildKey(parentKey *bip32.Key, path string) (*bip32.Key, error) {
 }
 
 type SomeKey struct {
-	Seed     string      `json:"seed,omitempty" yaml:"seed,omitempty"`
-	Mnemonic string      `json:"mnemonic,omitempty" yaml:"mnemonic,omitempty"`
-	Hrp      string      `json:"hrp,omitempty" yaml:"hrp,omitempty"`
-	RootKey  *ExtKeyData `json:"rootKey,omitempty" yaml:"rootKey,omitempty"`
-	ChildKey *ExtKeyData `json:"childKey,omitempty" yaml:"childKey,omitempty"`
+	Seed      string        `json:"seed,omitempty" yaml:"seed,omitempty"`
+	Mnemonic  string        `json:"mnemonic,omitempty" yaml:"mnemonic,omitempty"`
+	Hrp       string        `json:"hrp,omitempty" yaml:"hrp,omitempty"`
+	RootKey   *ExtKeyData   `json:"rootKey,omitempty" yaml:"rootKey,omitempty"`
+	ChildKeys []*ExtKeyData `json:"childKey,omitempty" yaml:"childKey,omitempty"`
 }
 
 type ExtKeyData struct {
-	Address    string       `json:"address" yaml:"address"`
-	PrivateKey InnerKeyData `json:"privateKey" yaml:"privateKey"`
-	PublicKey  InnerKeyData `json:"publicKey" yaml:"publicKey"`
+	Address     string       `json:"address" yaml:"address"`
+	Path        string       `json:"path,omitempty" yaml:"path,omitempty"`
+	PrivateKey  InnerKeyData `json:"privateKey" yaml:"privateKey"`
+	PublicKey   InnerKeyData `json:"publicKey" yaml:"publicKey"`
+	Depth       byte         `json:"depth" yaml:"depth"`
+	DepthLoc    string       `json:"depthLoc" yaml:"depthLoc"`
+	Chaincode   string       `json:"chaincode" yaml:"chaincode"`
+	Fingerprint string       `json:"fingerprint" yaml:"fingerprint"`
 }
 
 type InnerKeyData struct {
@@ -54,10 +59,18 @@ func NewInnerKeyData(key *bip32.Key) InnerKeyData {
 	}
 }
 
-func NewExtKeyData(key *bip32.Key, hrp string) *ExtKeyData {
-	return &ExtKeyData{
-		Address:    toAddress(hrp, key),
-		PrivateKey: NewInnerKeyData(key),
-		PublicKey:  NewInnerKeyData(key.PublicKey()),
+func NewExtKeyData(key *bip32.Key, hrp, path string) *ExtKeyData {
+	data := &ExtKeyData{
+		Address:     toAddress(hrp, key),
+		Path:        path,
+		PublicKey:   NewInnerKeyData(key.PublicKey()),
+		Depth:       key.Depth,
+		DepthLoc:    depthString(key.Depth),
+		Chaincode:   fmt.Sprintf("%X", key.ChainCode),
+		Fingerprint: fmt.Sprintf("%X", key.FingerPrint),
 	}
+	if key.IsPrivate {
+		data.PrivateKey = NewInnerKeyData(key)
+	}
+	return data
 }
