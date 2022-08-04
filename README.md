@@ -153,14 +153,14 @@ TODO
 ```
 
 # API key generation
-```
+```shell
 $ extkey serve
 ...
 [GIN-debug] GET    /generate                 --> github.com/provenance-io/extkey/cmd/extkey/commands.generateKeys (3 handlers)
 ...
 ```
 
-```
+```shell
 $ curl "localhost:9000/generate?hrp=tp" | jq
 {
   "seed": "UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztWNAXfnUME-bMpjp4jT0YxzEBWBA33_QWDAmeFE1I_hNlt2xJJew==",
@@ -201,7 +201,7 @@ $ curl "localhost:9000/generate?hrp=tp&seed=UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztW
 ```
 
 # Running via docker
-```
+```shell
 # Default listen port is 7000
 $ docker run -p 7000:7000 -it provenanceio/extkey
 
