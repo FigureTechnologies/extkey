@@ -1,4 +1,4 @@
-module github.com/provenance-io/extkey
+module github.com/FigureTechnologies/extkey
 
 go 1.18
 
