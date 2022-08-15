@@ -17,7 +17,7 @@ install: test
 
 .PHONY: docker
 docker:
-	docker build -f docker/Dockerfile -t provenanceio/extkey .
+	docker build -f docker/Dockerfile -t figuretechnologies/extkey .
 
 .PHONY: clean
 clean:
