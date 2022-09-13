@@ -6,11 +6,14 @@ GO  = go
 all: extkey
 
 extkey: $(SRC)
-	$(GO) build -o extkey ./cmd/extkey
+	$(GO) build -o build/extkey ./cmd/extkey
 
 .PHONY: test
 test:
 	$(GO) test -mod=readonly -race ./... 
+
+install: test
+	$(GO) install ./cmd/extkey
 
 .PHONY: docker
 docker:
@@ -63,3 +66,16 @@ endif
 .PHONY: lint
 lint: check-lint goimports gofmt gomisspell
 	golangci-lint run
+
+############
+# Protobuf #
+############
+.PHONY: proto
+proto:
+	mkdir -p `pwd`/pkg/encryption/eckey && \
+	docker run --rm \
+		-v `pwd`/proto:/proto \
+		-v `pwd`/pkg/encryption/eckey:/build:rw \
+		-w='/' \
+		--entrypoint=protoc \
+	  namely/protoc -I./proto -I/opt/include --gogo_out=./build --gogo_opt=paths=source_relative eckey.proto
