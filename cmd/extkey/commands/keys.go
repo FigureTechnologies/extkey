@@ -1,7 +1,11 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/btcsuite/btcd/btcec"
+	"github.com/gogo/protobuf/proto"
+	"github.com/provenance-io/extkey/pkg/encryption/eckey"
 	"math/big"
 
 	bip32 "github.com/tyler-smith/go-bip32"
@@ -34,43 +38,82 @@ type SomeKey struct {
 }
 
 type ExtKeyData struct {
-	Address     string       `json:"address" yaml:"address"`
-	Path        string       `json:"path,omitempty" yaml:"path,omitempty"`
-	PrivateKey  InnerKeyData `json:"privateKey" yaml:"privateKey"`
-	PublicKey   InnerKeyData `json:"publicKey" yaml:"publicKey"`
-	Depth       byte         `json:"depth" yaml:"depth"`
-	DepthLoc    string       `json:"depthLoc" yaml:"depthLoc"`
-	Chaincode   string       `json:"chaincode" yaml:"chaincode"`
-	Fingerprint string       `json:"fingerprint" yaml:"fingerprint"`
+	Address     string        `json:"address" yaml:"address"`
+	Path        string        `json:"path,omitempty" yaml:"path,omitempty"`
+	PrivateKey  *InnerKeyData `json:"privateKey" yaml:"privateKey"`
+	PublicKey   *InnerKeyData `json:"publicKey" yaml:"publicKey"`
+	Depth       byte          `json:"depth" yaml:"depth"`
+	DepthLoc    string        `json:"depthLoc" yaml:"depthLoc"`
+	Chaincode   string        `json:"chaincode" yaml:"chaincode"`
+	Fingerprint string        `json:"fingerprint" yaml:"fingerprint"`
 }
 
 type InnerKeyData struct {
-	Base58 string `json:"base58" yaml:"base58"`
-	Bytes  string `json:"bytes" yaml:"bytes,flow"`
-	BigInt string `json:"bigInt" yaml:"bigInt"`
+	Base58    string `json:"base58" yaml:"base58"`
+	Bytes     string `json:"bytes" yaml:"bytes,flow"`
+	BigInt    string `json:"bigInt" yaml:"bigInt"`
+	Proto     string `json:"proto" yaml:"proto"`
+	ProtoJson string `json:"protoJson" yaml:"protoJson"`
 }
 
-func NewInnerKeyData(key *bip32.Key) InnerKeyData {
-	bytes, _ := key.Serialize()
-	return InnerKeyData{
-		Base58: key.B58Serialize(),
-		Bytes:  fmt.Sprintf("%X", bytes),
-		BigInt: (&big.Int{}).SetBytes(key.Key).String(),
+func NewInnerKeyDataFromBIP32(key *bip32.Key) (prvKey, pubKey *InnerKeyData) {
+
+	if key.IsPrivate {
+		prvKey = NewInnerKeyData(key.Key, key.B58Serialize(), false)
+		pubKey = NewInnerKeyData(key.PublicKey().Key, key.PublicKey().B58Serialize(), true)
+	} else {
+		pubKey = NewInnerKeyData(key.Key, key.B58Serialize(), true)
+	}
+	return
+}
+
+func NewInnerKeyDataFromBTCECPub(key *btcec.PublicKey) (pubKey *InnerKeyData) {
+	return NewInnerKeyData(key.SerializeCompressed(), "", true)
+}
+
+func NewInnerKeyDataFromBTCECPrv(key *btcec.PrivateKey) (prvKey, pubKey *InnerKeyData) {
+	prvKey = NewInnerKeyData(key.Serialize(), "", false)
+	pubKey = NewInnerKeyData(key.PubKey().SerializeCompressed(), "", true)
+	return
+}
+
+func NewInnerKeyData(bz []byte, base58 string, compressed bool) *InnerKeyData {
+	msg := &eckey.Key{
+		KeyBytes:   bz,
+		Type:       eckey.KeyType_ELLIPTIC,
+		Curve:      eckey.KeyCurve_SECP256K1,
+		Compressed: compressed,
+	}
+	protoBz, err := proto.Marshal(msg)
+	if err != nil {
+		panic(err)
+	}
+	protoJson, err := json.Marshal(msg)
+	if err != nil {
+		panic(err)
+	}
+	return &InnerKeyData{
+		Base58:    base58,
+		Bytes:     fmt.Sprintf("%X", bz),
+		BigInt:    (&big.Int{}).SetBytes(bz).String(),
+		Proto:     fmt.Sprintf("%X", protoBz),
+		ProtoJson: string(protoJson),
 	}
 }
 
 func NewExtKeyData(key *bip32.Key, hrp, path string) *ExtKeyData {
+	prvKey, pubKey := NewInnerKeyDataFromBIP32(key)
 	data := &ExtKeyData{
 		Address:     toAddress(hrp, key),
 		Path:        path,
-		PublicKey:   NewInnerKeyData(key.PublicKey()),
+		PublicKey:   pubKey,
 		Depth:       key.Depth,
 		DepthLoc:    depthString(key.Depth),
 		Chaincode:   fmt.Sprintf("%X", key.ChainCode),
 		Fingerprint: fmt.Sprintf("%X", key.FingerPrint),
 	}
 	if key.IsPrivate {
-		data.PrivateKey = NewInnerKeyData(key)
+		data.PrivateKey = prvKey
 	}
 	return data
 }

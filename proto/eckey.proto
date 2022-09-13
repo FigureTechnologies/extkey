@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package eckey;
+
+enum KeyType {
+  ELLIPTIC = 0;
+}
+
+enum KeyCurve {
+  reserved "P256";
+  reserved 1;
+
+  SECP256K1 = 0;
+}
+
+message Key {
+  bytes key_bytes = 1;
+  KeyType type = 2;
+  KeyCurve curve = 3;
+  bool compressed = 4;
+}
