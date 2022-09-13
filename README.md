@@ -1,6 +1,6 @@
 ## Installation
 ```shell
-$ go install github.com/provenance-io/extkey/cmd/extkey@latest
+$ go install github.com/FigureTechnologies/extkey/cmd/extkey@latest
 ```
 
 # Encoding
@@ -156,7 +156,7 @@ TODO
 ```shell
 $ extkey serve
 ...
-[GIN-debug] GET    /generate                 --> github.com/provenance-io/extkey/cmd/extkey/commands.generateKeys (3 handlers)
+[GIN-debug] GET    /generate                 --> github.com/FigureTechnologies/extkey/cmd/extkey/commands.generateKeys (3 handlers)
 ...
 ```
 
@@ -203,11 +203,11 @@ $ curl "localhost:9000/generate?hrp=tp&seed=UeItRbah4gE-syrw1EaXVKyg3GKWqfZqOztW
 # Running via docker
 ```shell
 # Default listen port is 7000
-$ docker run -p 7000:7000 -it provenanceio/extkey
+$ docker run -p 7000:7000 -it FigureTechnologies/extkey
 
 # To specify listen port of 9000
-$ docker run -p 9000:9000 -it provenanceio/extkey serve --laddr :9000
+$ docker run -p 9000:9000 -it FigureTechnologies/extkey serve --laddr :9000
 
 # Enable extra gin debug logs
-$ docker run -p 7000:7000 -e GIN_MODE=debug -it provenanceio/extkey 
+$ docker run -p 7000:7000 -e GIN_MODE=debug -it FigureTechnologies/extkey 
 ```

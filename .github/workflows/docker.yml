@@ -1,6 +1,6 @@
 name: Docker Build and Push
 # Build & Push builds the docker image on every push to master
-# and pushes the image to https://hub.docker.com/u/provenanceio
+# and pushes the image to https://hub.docker.com/u/figuretechnologies
 on:
   pull_request:
 
@@ -28,7 +28,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=provenanceio/extkey
+          DOCKER_IMAGE=figuretechnologies/extkey
           VERSION=noop
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}

@@ -3,6 +3,7 @@ FROM golang:1.18 as build
 WORKDIR /app
 COPY ./go.mod ./go.sum ./
 COPY ./cmd/ ./cmd/
+COPY ./pkg ./pkg/
 RUN go mod download && go build -o /go/bin/extkey ./cmd/extkey
 
 # Runtime
