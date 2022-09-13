@@ -4,8 +4,6 @@
 #
 # Secondary repo maintainers, substitutes of the primary maintainers when they become MIA
 
-# Secondary code owners:
-*	@rchaing-figure @piercetrey-figure
-
 # Primary code owners:
-*	@mtps @jphorec
+*	@mtps @jphorec @rchaing-figure @piercetrey-figure
+
