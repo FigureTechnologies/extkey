@@ -3,6 +3,7 @@ package commands
 import (
 	"encoding/hex"
 	"fmt"
+
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/gogo/protobuf/proto"
 	"github.com/provenance-io/extkey/pkg/encryption/eckey"
@@ -106,7 +107,6 @@ func decodeProto(bz []byte, w io.Writer, formatter Formatter, isPub bool) error 
 
 	var pub *InnerKeyData
 	var prv *InnerKeyData
-	var err error
 	if isPub {
 		pk, err := btcec.ParsePubKey(msg.KeyBytes, curve)
 		if err != nil {

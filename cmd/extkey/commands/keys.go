@@ -3,10 +3,11 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"math/big"
+
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/gogo/protobuf/proto"
 	"github.com/provenance-io/extkey/pkg/encryption/eckey"
-	"math/big"
 
 	bip32 "github.com/tyler-smith/go-bip32"
 )
@@ -53,11 +54,10 @@ type InnerKeyData struct {
 	Bytes     string `json:"bytes" yaml:"bytes,flow"`
 	BigInt    string `json:"bigInt" yaml:"bigInt"`
 	Proto     string `json:"proto" yaml:"proto"`
-	ProtoJson string `json:"protoJson" yaml:"protoJson"`
+	ProtoJSON string `json:"protoJson" yaml:"protoJson"`
 }
 
 func NewInnerKeyDataFromBIP32(key *bip32.Key) (prvKey, pubKey *InnerKeyData) {
-
 	if key.IsPrivate {
 		prvKey = NewInnerKeyData(key.Key, key.B58Serialize(), false)
 		pubKey = NewInnerKeyData(key.PublicKey().Key, key.PublicKey().B58Serialize(), true)
@@ -88,7 +88,7 @@ func NewInnerKeyData(bz []byte, base58 string, compressed bool) *InnerKeyData {
 	if err != nil {
 		panic(err)
 	}
-	protoJson, err := json.Marshal(msg)
+	protoJS, err := json.Marshal(msg)
 	if err != nil {
 		panic(err)
 	}
@@ -97,7 +97,7 @@ func NewInnerKeyData(bz []byte, base58 string, compressed bool) *InnerKeyData {
 		Bytes:     fmt.Sprintf("%X", bz),
 		BigInt:    (&big.Int{}).SetBytes(bz).String(),
 		Proto:     fmt.Sprintf("%X", protoBz),
-		ProtoJson: string(protoJson),
+		ProtoJSON: string(protoJS),
 	}
 }
 
