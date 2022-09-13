@@ -7,7 +7,8 @@ import (
 
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/gogo/protobuf/proto"
-	"github.com/provenance-io/extkey/pkg/encryption/eckey"
+
+	"github.com/FigureTechnologies/extkey/pkg/encryption/eckey"
 
 	bip32 "github.com/tyler-smith/go-bip32"
 )
