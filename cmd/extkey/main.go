@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/provenance-io/extkey/cmd/extkey/commands"
+	"github.com/FigureTechnologies/extkey/cmd/extkey/commands"
 )
 
 func main() {

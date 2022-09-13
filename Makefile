@@ -17,7 +17,7 @@ install: test
 
 .PHONY: docker
 docker:
-	docker build -f docker/Dockerfile -t provenanceio/extkey .
+	docker build -f docker/Dockerfile -t figuretechnologies/extkey .
 
 .PHONY: clean
 clean:
@@ -43,7 +43,7 @@ endif
 
 .PHONY: goimports
 goimports: check-goimports
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs goimports -w -local github.com/provenance-io/cosmovisor
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs goimports -w -local github.com/FigureTechnologies/extkey
 
 .PHONY: check-gomisspell
 check-gomisspell:
