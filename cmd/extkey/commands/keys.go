@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -52,6 +53,7 @@ type ExtKeyData struct {
 
 type InnerKeyData struct {
 	Base58    string `json:"base58" yaml:"base58"`
+	Base64    string `json:"base64" yaml:"base64"`
 	Bytes     string `json:"bytes" yaml:"bytes,flow"`
 	BigInt    string `json:"bigInt" yaml:"bigInt"`
 	Proto     string `json:"proto" yaml:"proto"`
@@ -93,8 +95,10 @@ func NewInnerKeyData(bz []byte, base58 string, compressed bool) *InnerKeyData {
 	if err != nil {
 		panic(err)
 	}
+	b64 := base64.StdEncoding.EncodeToString(bz)
 	return &InnerKeyData{
 		Base58:    base58,
+		Base64:    b64,
 		Bytes:     fmt.Sprintf("%X", bz),
 		BigInt:    (&big.Int{}).SetBytes(bz).String(),
 		Proto:     fmt.Sprintf("%X", protoBz),
