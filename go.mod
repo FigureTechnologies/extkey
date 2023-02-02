@@ -1,6 +1,6 @@
 module github.com/FigureTechnologies/extkey
 
-go 1.18
+go 1.20
 
 require (
 	github.com/btcsuite/btcd v0.20.1-beta
