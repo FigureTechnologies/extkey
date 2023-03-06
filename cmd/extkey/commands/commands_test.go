@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 func TestGenerate(t *testing.T) {
 	paths := []string{"m/44'/505'/0'/0'/0"}
 
