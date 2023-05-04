@@ -1,4 +1,4 @@
-GOLANGCI_VERSION = 1.47.2
+GOLANGCI_VERSION = 1.52.2
 
 SRC = $(shell find . -name *.go)
 GO  = go
