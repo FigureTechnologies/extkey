@@ -3,7 +3,7 @@ module github.com/FigureTechnologies/extkey
 go 1.18
 
 require (
-	github.com/btcsuite/btcd v0.20.1-beta
+	github.com/btcsuite/btcd v0.23.4
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gogo/protobuf v1.3.2
