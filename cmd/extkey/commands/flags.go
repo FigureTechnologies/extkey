@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 func addFlags(cmd *cobra.Command, opts ...func(cmd *cobra.Command)) {
