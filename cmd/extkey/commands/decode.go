@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/FigureTechnologies/extkey/pkg/encryption/eckey"
@@ -109,23 +109,24 @@ func decodeProto(bz []byte, w io.Writer, formatter Formatter, isPub bool) error 
 	var pub *InnerKeyData
 	var prv *InnerKeyData
 	if isPub {
-		pk, err := btcec.ParsePubKey(msg.KeyBytes, curve)
+		pk, err := btcec.ParsePubKey(msg.KeyBytes)
 		if err != nil {
 			return err
 		}
-		if !curve.IsOnCurve(pk.X, pk.Y) {
+		if !curve.IsOnCurve(pk.X(), pk.Y()) {
 			return fmt.Errorf("invalid point for curve")
 		}
 		pub = NewInnerKeyDataFromBTCECPub(pk)
 	} else {
-		prvK, pubK := btcec.PrivKeyFromBytes(curve, msg.KeyBytes)
+		prvK, pubK := btcec.PrivKeyFromBytes(msg.KeyBytes)
 		if prvK == nil || pubK == nil {
 			return fmt.Errorf("invalid private key")
 		}
-		if !curve.IsOnCurve(prvK.X, prvK.Y) {
+		ecPrvK := prvK.ToECDSA()
+		if !curve.IsOnCurve(ecPrvK.X, ecPrvK.Y) {
 			return fmt.Errorf("invalid point for private key")
 		}
-		if !curve.IsOnCurve(pubK.X, pubK.Y) {
+		if !curve.IsOnCurve(pubK.X(), pubK.Y()) {
 			return fmt.Errorf("invalid point for public key")
 		}
 		prv, pub = NewInnerKeyDataFromBTCECPrv(prvK)

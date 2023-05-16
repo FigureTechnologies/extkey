@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/FigureTechnologies/extkey/pkg/encryption/eckey"
