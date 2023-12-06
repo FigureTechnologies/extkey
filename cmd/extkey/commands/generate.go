@@ -3,13 +3,15 @@ package commands
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/FigureTechnologies/extkey/pkg/encryption/extkey"
+	"github.com/FigureTechnologies/extkey/pkg/keys"
 	"io"
 	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
-	bip32 "github.com/tyler-smith/go-bip32"
-	bip39 "github.com/tyler-smith/go-bip39"
+	"github.com/tyler-smith/go-bip32"
+	"github.com/tyler-smith/go-bip39"
 )
 
 var CmdGenerate = &cobra.Command{
@@ -64,7 +66,7 @@ func generate(hrp, seed string, paths []string, formatter Formatter, w io.Writer
 	return nil
 }
 
-func GenerateExtKey(hrp string, paths []string, seedBz []byte) (SomeKey, error) {
+func GenerateExtKey(hrp string, paths []string, seedBz []byte) (keys.SomeKey, error) {
 	var seed []byte
 	var err error
 	var mnemonic string
@@ -72,11 +74,11 @@ func GenerateExtKey(hrp string, paths []string, seedBz []byte) (SomeKey, error) 
 		var entropy []byte
 		entropy, err = bip39.NewEntropy(256)
 		if err != nil {
-			return SomeKey{}, err
+			return keys.SomeKey{}, err
 		}
 		mnemonic, err = bip39.NewMnemonic(entropy)
 		if err != nil {
-			return SomeKey{}, err
+			return keys.SomeKey{}, err
 		}
 		seed = bip39.NewSeed(mnemonic, "")
 	} else {
@@ -85,20 +87,20 @@ func GenerateExtKey(hrp string, paths []string, seedBz []byte) (SomeKey, error) 
 
 	rootKey, err := bip32.NewMasterKey(seed)
 	if err != nil {
-		return SomeKey{}, err
+		return keys.SomeKey{}, err
 	}
-	key := SomeKey{
+	key := keys.SomeKey{
 		Hrp:      hrp,
 		Seed:     base64.URLEncoding.EncodeToString(seed),
 		Mnemonic: mnemonic,
-		RootKey:  NewExtKeyData(rootKey, hrp, ""),
+		RootKey:  extkey.NewExtKeyData(rootKey, hrp, ""),
 	}
 	for _, path := range paths {
-		childKey, err := DeriveChildKey(rootKey, path)
+		childKey, err := extkey.DeriveChildKey(rootKey, path)
 		if err != nil {
-			return SomeKey{}, err
+			return keys.SomeKey{}, err
 		}
-		key.ChildKeys = append(key.ChildKeys, NewExtKeyData(childKey, hrp, path))
+		key.ChildKeys = append(key.ChildKeys, extkey.NewExtKeyData(childKey, hrp, path))
 	}
 	return key, nil
 }

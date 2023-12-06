@@ -1,18 +1,21 @@
-package commands
+package util
 
 import (
 	"crypto/sha256"
 	"fmt"
+	"golang.org/x/crypto/ssh/terminal"
 	"hash"
+	"os"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/btcsuite/btcutil/bech32"
-	bip32 "github.com/tyler-smith/go-bip32"
+	"github.com/tyler-smith/go-bip32"
 	"golang.org/x/crypto/ripemd160"
 )
 
-func depthString(depth byte) string {
+func DepthString(depth byte) string {
 	path := []string{
 		"m", "44", "coin", "account", "change", "index",
 	}
@@ -25,20 +28,20 @@ func depthString(depth byte) string {
 	return strings.Join(path, "/")
 }
 
-func toAddress(hrp string, key *bip32.Key) string {
+func KeyToAddress(hrp string, key *bip32.Key) string {
 	if key.IsPrivate {
 		key = key.PublicKey()
 	}
 
-	addr, err := toAddressErr(hrp, key.Key)
+	addr, err := KeyToAddressErr(hrp, key.Key)
 	if err != nil {
 		panic(err)
 	}
 	return addr
 }
 
-// toAddressErr converts from a base64 encoded byte string to base32 encoded byte string and then to bech32.
-func toAddressErr(hrp string, data []byte) (string, error) {
+// KeyToAddressErr converts from a base64 encoded byte string to base32 encoded byte string and then to bech32.
+func KeyToAddressErr(hrp string, data []byte) (string, error) {
 	bz := Hash160(data)
 	converted, err := bech32.ConvertBits(bz, 8, 5, true)
 	if err != nil {
@@ -47,7 +50,7 @@ func toAddressErr(hrp string, data []byte) (string, error) {
 	return bech32.Encode(hrp, converted)
 }
 
-func parseBIP44(path string) ([]uint32, []bool, error) {
+func ParseBIP44(path string) ([]uint32, []bool, error) {
 	split := strings.Split(path, "/")
 	if split[0] != "m" {
 		return nil, nil, fmt.Errorf("invalid bip44 path")
@@ -80,4 +83,20 @@ func Hash160(buf []byte) []byte {
 func calcHash(buf []byte, hasher hash.Hash) []byte {
 	_, _ = hasher.Write(buf)
 	return hasher.Sum(nil)
+}
+
+func EnvOrSecret(name string) (string, error) {
+	var value string
+	if m, ok := os.LookupEnv(strings.ToUpper(name)); !ok {
+		fmt.Printf("%s: ", name)
+		bz, err := terminal.ReadPassword(syscall.Stdin)
+		if err != nil {
+			return "", err
+		}
+		value = string(bz)
+		fmt.Printf("\n")
+	} else {
+		value = m
+	}
+	return value, nil
 }
