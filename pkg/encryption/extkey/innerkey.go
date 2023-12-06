@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/FigureTechnologies/extkey/pkg/encryption/eckey"
-	"github.com/FigureTechnologies/extkey/pkg/keys"
+	"github.com/FigureTechnologies/extkey/pkg/encryption/types"
 	"github.com/FigureTechnologies/extkey/pkg/util"
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/gogo/protobuf/proto"
@@ -31,7 +31,7 @@ func DeriveChildKey(parentKey *bip32.Key, path string) (*bip32.Key, error) {
 	return childKey, nil
 }
 
-func NewInnerKeyDataFromBIP32(key *bip32.Key) (prvKey, pubKey *keys.InnerKeyData) {
+func NewInnerKeyDataFromBIP32(key *bip32.Key) (prvKey, pubKey *types.InnerKeyData) {
 	if key.IsPrivate {
 		prvKey = NewInnerKeyData(key.Key, key.B58Serialize(), false)
 		pubKey = NewInnerKeyData(key.PublicKey().Key, key.PublicKey().B58Serialize(), true)
@@ -41,17 +41,17 @@ func NewInnerKeyDataFromBIP32(key *bip32.Key) (prvKey, pubKey *keys.InnerKeyData
 	return
 }
 
-func NewInnerKeyDataFromBTCECPub(key *btcec.PublicKey) (pubKey *keys.InnerKeyData) {
+func NewInnerKeyDataFromBTCECPub(key *btcec.PublicKey) (pubKey *types.InnerKeyData) {
 	return NewInnerKeyData(key.SerializeCompressed(), "", true)
 }
 
-func NewInnerKeyDataFromBTCECPrv(key *btcec.PrivateKey) (prvKey, pubKey *keys.InnerKeyData) {
+func NewInnerKeyDataFromBTCECPrv(key *btcec.PrivateKey) (prvKey, pubKey *types.InnerKeyData) {
 	prvKey = NewInnerKeyData(key.Serialize(), "", false)
 	pubKey = NewInnerKeyData(key.PubKey().SerializeCompressed(), "", true)
 	return
 }
 
-func NewInnerKeyData(bz []byte, base58 string, compressed bool) *keys.InnerKeyData {
+func NewInnerKeyData(bz []byte, base58 string, compressed bool) *types.InnerKeyData {
 	msg := &eckey.Key{
 		KeyBytes:   bz,
 		Type:       eckey.KeyType_ELLIPTIC,
@@ -67,7 +67,7 @@ func NewInnerKeyData(bz []byte, base58 string, compressed bool) *keys.InnerKeyDa
 		panic(err)
 	}
 	b64 := base64.StdEncoding.EncodeToString(bz)
-	return &keys.InnerKeyData{
+	return &types.InnerKeyData{
 		Base58:    base58,
 		Base64:    b64,
 		Bytes:     fmt.Sprintf("%X", bz),
@@ -77,9 +77,9 @@ func NewInnerKeyData(bz []byte, base58 string, compressed bool) *keys.InnerKeyDa
 	}
 }
 
-func NewExtKeyData(key *bip32.Key, hrp, path string) *keys.ExtKeyData {
+func NewExtKeyData(key *bip32.Key, hrp, path string) *types.ExtKeyData {
 	prvKey, pubKey := NewInnerKeyDataFromBIP32(key)
-	data := &keys.ExtKeyData{
+	data := &types.ExtKeyData{
 		Address:     util.KeyToAddress(hrp, key),
 		Path:        path,
 		PublicKey:   pubKey,

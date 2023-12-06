@@ -1,4 +1,4 @@
-package keys
+package types
 
 type SomeKey struct {
 	Seed      string        `json:"seed,omitempty" yaml:"seed,omitempty"`

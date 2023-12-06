@@ -3,6 +3,7 @@ package keys
 import (
 	"encoding/base64"
 	"github.com/FigureTechnologies/extkey/pkg/encryption/extkey"
+	"github.com/FigureTechnologies/extkey/pkg/encryption/types"
 	"github.com/FigureTechnologies/extkey/pkg/util"
 	"github.com/tyler-smith/go-bip32"
 	"github.com/tyler-smith/go-bip39"
@@ -23,7 +24,7 @@ func NewSeedFromEnvOrPrompt() ([]byte, error) {
 	return bip39.NewSeed(mnemonic, passphrase), nil
 }
 
-func EncodeSomeKeysFromSeed(paths []string, hrp, seedB64 string) (*SomeKey, error) {
+func EncodeSomeKeysFromSeed(paths []string, hrp, seedB64 string) (*types.SomeKey, error) {
 	var err error
 	seedBz, err := base64.URLEncoding.DecodeString(seedB64)
 	if err != nil {
@@ -34,7 +35,7 @@ func EncodeSomeKeysFromSeed(paths []string, hrp, seedB64 string) (*SomeKey, erro
 	if err != nil {
 		return nil, err
 	}
-	key := &SomeKey{
+	key := &types.SomeKey{
 		Seed:     base64.URLEncoding.EncodeToString(seedBz),
 		Mnemonic: "",
 		Hrp:      hrp,

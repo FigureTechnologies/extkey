@@ -3,7 +3,6 @@ package util
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 	"io"
 )
@@ -33,7 +32,5 @@ func NewFormatter(format string) (Formatter, error) {
 	}
 	return nil, nil
 }
-
-func NewFormatterForFlags(set *pflag.FlagSet) (Formatter, error)
 
 type Formatter = func(data interface{}) ([]byte, error)

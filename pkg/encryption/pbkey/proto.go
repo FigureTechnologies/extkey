@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/FigureTechnologies/extkey/pkg/encryption/eckey"
 	"github.com/FigureTechnologies/extkey/pkg/encryption/extkey"
-	"github.com/FigureTechnologies/extkey/pkg/keys"
+	"github.com/FigureTechnologies/extkey/pkg/encryption/types"
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/gogo/protobuf/proto"
 )
@@ -23,8 +23,8 @@ func DecodeProto(bz []byte, isPub bool) (*extkey.DecodedProtoInfo, error) {
 		panic("curve not found " + msg.Curve.String())
 	}
 
-	var pub *keys.InnerKeyData
-	var prv *keys.InnerKeyData
+	var pub *types.InnerKeyData
+	var prv *types.InnerKeyData
 	if isPub {
 		pk, err := btcec.ParsePubKey(msg.KeyBytes, curve)
 		if err != nil {

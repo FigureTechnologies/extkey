@@ -20,16 +20,13 @@ var cmdDecode = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		formatter, err := util.NewFormatter(strings.TrimSpace(cmd.Flag("format").Value.String()))
-		if err != nil {
-			return err
-		}
 		xkey := strings.TrimSpace(args[0])
 		info, err := extkey.DecodeExtKey(hrp, xkey)
 		if err != nil {
 			return err
 		}
-		return Din(info, os.Stdout, formatter)
+		format := strings.TrimSpace(cmd.Flag("format").Value.String())
+		return util.Display(info, format, os.Stdout)
 	},
 }
 
@@ -51,7 +48,7 @@ var cmdDecodeProto = &cobra.Command{
 			return err
 		}
 		format := strings.TrimSpace(cmd.Flag("format").Value.String())
-		return util.Display(info, cmd, os.Stdout, formatter)
+		return util.Display(info, format, os.Stdout)
 	},
 }
 

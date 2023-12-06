@@ -4,7 +4,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/FigureTechnologies/extkey/pkg/encryption/extkey"
-	"github.com/FigureTechnologies/extkey/pkg/keys"
+	"github.com/FigureTechnologies/extkey/pkg/encryption/types"
+	"github.com/FigureTechnologies/extkey/pkg/util"
 	"io"
 	"os"
 	"strings"
@@ -33,11 +34,8 @@ var CmdGenerate = &cobra.Command{
 			seed = strings.TrimSpace(cmd.Flag("seed").Value.String())
 		}
 
-		formatter, err := formatize(strings.TrimSpace(cmd.Flag("format").Value.String()))
-		if err != nil {
-			return err
-		}
-		return generate(hrp, seed, hdPaths, formatter, os.Stdout)
+		format := strings.TrimSpace(cmd.Flag("format").Value.String())
+		return generate(hrp, seed, hdPaths, format, os.Stdout)
 	},
 }
 
@@ -45,7 +43,7 @@ func init() {
 	addFlags(CmdGenerate, flagHRP, flagFormat, flagHDPath, flagSeed)
 }
 
-func generate(hrp, seed string, paths []string, formatter Formatter, w io.Writer) error {
+func generate(hrp, seed string, paths []string, format string, w io.Writer) error {
 	var seedBz []byte
 	var err error
 	if seed != "" {
@@ -58,15 +56,10 @@ func generate(hrp, seed string, paths []string, formatter Formatter, w io.Writer
 	if err != nil {
 		return err
 	}
-	output, err := formatter(key)
-	if err != nil {
-		return err
-	}
-	fmt.Fprintf(w, "%s\n", output)
-	return nil
+	return util.Display(key, format, w)
 }
 
-func GenerateExtKey(hrp string, paths []string, seedBz []byte) (keys.SomeKey, error) {
+func GenerateExtKey(hrp string, paths []string, seedBz []byte) (types.SomeKey, error) {
 	var seed []byte
 	var err error
 	var mnemonic string
@@ -74,11 +67,11 @@ func GenerateExtKey(hrp string, paths []string, seedBz []byte) (keys.SomeKey, er
 		var entropy []byte
 		entropy, err = bip39.NewEntropy(256)
 		if err != nil {
-			return keys.SomeKey{}, err
+			return types.SomeKey{}, err
 		}
 		mnemonic, err = bip39.NewMnemonic(entropy)
 		if err != nil {
-			return keys.SomeKey{}, err
+			return types.SomeKey{}, err
 		}
 		seed = bip39.NewSeed(mnemonic, "")
 	} else {
@@ -87,9 +80,9 @@ func GenerateExtKey(hrp string, paths []string, seedBz []byte) (keys.SomeKey, er
 
 	rootKey, err := bip32.NewMasterKey(seed)
 	if err != nil {
-		return keys.SomeKey{}, err
+		return types.SomeKey{}, err
 	}
-	key := keys.SomeKey{
+	key := types.SomeKey{
 		Hrp:      hrp,
 		Seed:     base64.URLEncoding.EncodeToString(seed),
 		Mnemonic: mnemonic,
@@ -98,7 +91,7 @@ func GenerateExtKey(hrp string, paths []string, seedBz []byte) (keys.SomeKey, er
 	for _, path := range paths {
 		childKey, err := extkey.DeriveChildKey(rootKey, path)
 		if err != nil {
-			return keys.SomeKey{}, err
+			return types.SomeKey{}, err
 		}
 		key.ChildKeys = append(key.ChildKeys, extkey.NewExtKeyData(childKey, hrp, path))
 	}

@@ -27,7 +27,8 @@ var CmdEncode = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return util.Display(kz, cmd, os.Stdout)
+		format := strings.TrimSpace(cmd.Flag("format").Value.String())
+		return util.Display(kz, format, os.Stdout)
 	},
 }
 
