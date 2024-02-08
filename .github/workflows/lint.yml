@@ -9,7 +9,7 @@ on:
 jobs:
   golangci:
     name: golangci-lint
-    runs-on: ubuntu-latest
+    runs-on: figure-linux-standard
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v3
