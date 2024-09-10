@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: technote-space/get-diff-action@v6.1.2
         with:
           PATTERNS: |
@@ -24,5 +24,5 @@ jobs:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: v1.52.2
           args: --timeout 10m
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.
         if: env.GIT_DIFF
